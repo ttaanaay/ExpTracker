@@ -55,8 +55,22 @@ import com.expensetracker.app.ui.theme.ExpenseRed
 import com.expensetracker.app.ui.theme.IncomeGreen
 
 private val availableIcons = listOf(
+    // หมวดหมู่เริ่มต้น (ให้ตรงกับ default categories เสมอ)
     "🍜", "🚗", "🛒", "💡", "❤️", "🎮", "📦", "💼", "🎁", "💰", "📈", "💵",
-    "🏠", "📱", "✈️", "🎓", "🐾", "🎬"
+    // อาหาร/เครื่องดื่ม
+    "🍔", "🍕", "🍣", "🍰", "☕", "🍺", "🍎", "🥗", "🍳", "🍟",
+    // เดินทาง
+    "🚕", "🚌", "🚆", "🚲", "⛽", "🛵", "✈️", "🚢", "🅿️", "🚇",
+    // ช้อปปิ้ง
+    "🛍️", "👕", "👟", "💄", "💍", "👜", "🕶️", "⌚",
+    // บ้าน/บิล
+    "🏠", "📱", "🌐", "🔧", "🧹", "🔑", "📺", "🛋️",
+    // สุขภาพ
+    "💊", "🏥", "🧘", "💪", "🦷",
+    // บันเทิง/การศึกษา
+    "🎬", "🎵", "🎨", "📚", "🎉",
+    // อื่นๆ
+    "🏦", "💳", "🐾", "🎓", "👶", "🧳"
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -246,8 +260,8 @@ private fun CategoryEditDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("ไอคอน", style = MaterialTheme.typography.labelSmall)
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(6),
-                    modifier = Modifier.height(120.dp)
+                    columns = GridCells.Fixed(8),
+                    modifier = Modifier.height(240.dp)
                 ) {
                     items(availableIcons) { icon ->
                         val selected = icon == selectedIcon
