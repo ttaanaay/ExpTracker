@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -53,7 +54,6 @@ import com.expensetracker.app.data.local.entity.CategoryEntity
 import com.expensetracker.app.data.model.TransactionType
 import com.expensetracker.app.ui.components.CategoryIconBadge
 import com.expensetracker.app.ui.icons.CategoryIcons
-import com.expensetracker.app.ui.theme.CategoryColors
 import com.expensetracker.app.ui.theme.ExpenseRed
 import com.expensetracker.app.ui.theme.IncomeGreen
 
@@ -152,6 +152,7 @@ fun CategoryScreen(
         CategoryEditDialog(
             initial = null,
             defaultType = state.selectedType,
+            existingColors = list.map { it.color },
             onDismiss = { showAddDialog = false },
             onConfirm = { name, icon, color, type ->
                 viewModel.addCategory(name, icon, color, type)
@@ -161,9 +162,11 @@ fun CategoryScreen(
     }
 
     editingCategory?.let { category ->
+        val sameTypeList = if (category.type == TransactionType.INCOME) state.incomeCategories else state.expenseCategories
         CategoryEditDialog(
             initial = category,
             defaultType = category.type,
+            existingColors = sameTypeList.map { it.color },
             onDismiss = { editingCategory = null },
             onConfirm = { name, icon, color, type ->
                 viewModel.updateCategory(category.copy(name = name, icon = icon, color = color, type = type))
@@ -220,16 +223,26 @@ private fun CategoryRow(
     }
 }
 
+/** สุ่มสีจาก palette โดยเลี่ยงสีที่หมวดหมู่ประเภทเดียวกันใช้อยู่แล้ว ถ้าใช้ครบทุกสีแล้วค่อยสุ่มซ้ำ */
+private fun randomUnusedColor(existingColors: List<Long>): Long {
+    val palette = com.expensetracker.app.ui.theme.CategoryColorHex
+    val unused = palette.filter { it !in existingColors }
+    return (unused.ifEmpty { palette }).random()
+}
+
 @Composable
 private fun CategoryEditDialog(
     initial: CategoryEntity?,
     defaultType: TransactionType,
+    existingColors: List<Long> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (name: String, icon: String, color: Long, type: TransactionType) -> Unit
 ) {
     var name by remember { mutableStateOf(initial?.name ?: "") }
     var selectedIcon by remember { mutableStateOf(initial?.icon ?: availableIcons.first()) }
-    var selectedColor by remember { mutableStateOf(initial?.color ?: com.expensetracker.app.ui.theme.CategoryColorHex.first()) }
+    var selectedColor by remember {
+        mutableStateOf(initial?.color ?: randomUnusedColor(existingColors))
+    }
     var type by remember { mutableStateOf(initial?.type ?: defaultType) }
 
     AlertDialog(
@@ -246,8 +259,8 @@ private fun CategoryEditDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("ไอคอน", style = MaterialTheme.typography.labelSmall)
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(8),
-                    modifier = Modifier.height(280.dp)
+                    columns = GridCells.Fixed(6),
+                    modifier = Modifier.height(340.dp)
                 ) {
                     items(availableIcons) { icon ->
                         val selected = icon == selectedIcon
@@ -255,7 +268,7 @@ private fun CategoryEditDialog(
                             painter = painterResource(id = CategoryIcons.resolve(icon)),
                             contentDescription = icon,
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(3.dp)
                                 .clickable { selectedIcon = icon }
                                 .then(
                                     if (selected) Modifier.background(
@@ -264,19 +277,22 @@ private fun CategoryEditDialog(
                                     ) else Modifier
                                 )
                                 .padding(6.dp)
-                                .size(28.dp)
+                                .size(40.dp)
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("สี", style = MaterialTheme.typography.labelSmall)
-                Row {
-                    com.expensetracker.app.ui.theme.CategoryColorHex.take(8).forEach { colorLong ->
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(6),
+                    modifier = Modifier.height(80.dp)
+                ) {
+                    items(com.expensetracker.app.ui.theme.CategoryColorHex) { colorLong ->
                         val selected = colorLong == selectedColor
-                        androidx.compose.foundation.layout.Box(
+                        Box(
                             modifier = Modifier
                                 .padding(4.dp)
-                                .size(if (selected) 28.dp else 22.dp)
+                                .size(if (selected) 30.dp else 24.dp)
                                 .background(Color(colorLong), CircleShape)
                                 .clickable { selectedColor = colorLong }
                         )
