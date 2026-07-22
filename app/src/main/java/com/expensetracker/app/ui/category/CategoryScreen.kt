@@ -149,10 +149,11 @@ fun CategoryScreen(
     }
 
     if (showAddDialog) {
+        val currentTypeList = if (state.selectedType == TransactionType.INCOME) state.incomeCategories else state.expenseCategories
         CategoryEditDialog(
             initial = null,
             defaultType = state.selectedType,
-            existingColors = list.map { it.color },
+            existingColors = currentTypeList.map { it.color },
             onDismiss = { showAddDialog = false },
             onConfirm = { name, icon, color, type ->
                 viewModel.addCategory(name, icon, color, type)
