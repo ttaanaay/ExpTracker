@@ -3,6 +3,8 @@ package com.expensetracker.app.ui.category
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -250,7 +253,11 @@ private fun CategoryEditDialog(
         onDismissRequest = onDismiss,
         title = { Text(if (initial == null) "เพิ่มหมวดหมู่" else "แก้ไขหมวดหมู่") },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .heightIn(max = 560.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -260,8 +267,8 @@ private fun CategoryEditDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("ไอคอน", style = MaterialTheme.typography.labelSmall)
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(6),
-                    modifier = Modifier.height(340.dp)
+                    columns = GridCells.Adaptive(minSize = 100.dp),
+                    modifier = Modifier.height(420.dp)
                 ) {
                     items(availableIcons) { icon ->
                         val selected = icon == selectedIcon
@@ -269,7 +276,7 @@ private fun CategoryEditDialog(
                             painter = painterResource(id = CategoryIcons.resolve(icon)),
                             contentDescription = icon,
                             modifier = Modifier
-                                .padding(3.dp)
+                                .padding(4.dp)
                                 .clickable { selectedIcon = icon }
                                 .then(
                                     if (selected) Modifier.background(
@@ -277,8 +284,8 @@ private fun CategoryEditDialog(
                                         CircleShape
                                     ) else Modifier
                                 )
-                                .padding(6.dp)
-                                .size(40.dp)
+                                .padding(10.dp)
+                                .size(100.dp)
                         )
                     }
                 }
@@ -286,7 +293,7 @@ private fun CategoryEditDialog(
                 Text("สี", style = MaterialTheme.typography.labelSmall)
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(6),
-                    modifier = Modifier.height(80.dp)
+                    modifier = Modifier.height(220.dp)
                 ) {
                     items(com.expensetracker.app.ui.theme.CategoryColorHex) { colorLong ->
                         val selected = colorLong == selectedColor
