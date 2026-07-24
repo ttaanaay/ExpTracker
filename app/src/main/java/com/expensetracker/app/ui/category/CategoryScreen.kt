@@ -267,8 +267,8 @@ private fun CategoryEditDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("ไอคอน", style = MaterialTheme.typography.labelSmall)
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 100.dp),
-                    modifier = Modifier.height(420.dp)
+                    columns = GridCells.Adaptive(minSize = 50.dp),
+                    modifier = Modifier.height(320.dp)
                 ) {
                     items(availableIcons) { icon ->
                         val selected = icon == selectedIcon
@@ -276,7 +276,7 @@ private fun CategoryEditDialog(
                             painter = painterResource(id = CategoryIcons.resolve(icon)),
                             contentDescription = icon,
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(2.dp)
                                 .clickable { selectedIcon = icon }
                                 .then(
                                     if (selected) Modifier.background(
@@ -284,8 +284,8 @@ private fun CategoryEditDialog(
                                         CircleShape
                                     ) else Modifier
                                 )
-                                .padding(10.dp)
-                                .size(100.dp)
+                                .padding(5.dp)
+                                .size(50.dp)
                         )
                     }
                 }
